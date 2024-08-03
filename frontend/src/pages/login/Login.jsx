@@ -1,84 +1,108 @@
-import React from "react";
+import { useState } from "react";
+import { Link } from "react-router-dom";
+import useLogin from "../../hooks/useLogin";
 
-export default function Login() {
-  return (
-    <div className="flex flex-col items-center justify-center min-w-96 mx-auto">
-      <div className="w-full p-6 rounded-lg shadow-md bg-red-400 bg-clip-padding backdrop-filter backdrop-blur-lg bg-opacity-0">
-        <h1 className="text-5xl font-semibold text-center text-black ">
-          Login
-          <span className="text-blue-800"> </span>
-        </h1>
-        <form>
-          <div>
-            <label className="label p-2 mt-2">
-              <span className=" label-text font-bold text-xl">Username</span>
-            </label>
-            <input
-              type="text"
-              placeholder="Enter username"
-              className="input input-bordered w-full max-w-xs"
-            />
-            <label className="label p-2 mt-2">
-              <span className=" label-text font-bold text-xl">Password</span>
-            </label>
-            <input
-              type="text"
-              placeholder="Enter Password"
-              className="input input-bordered w-full max-w-xs"
-            />
-          </div>
-          <a href="#" className="test-sm hover:underline hover:text-red-600 mt-3 inline-block"> Don't have an account create now</a>
-          <div class="flex justify-center items-center ">
-            <button class="btn btn-neutral mt-2 flex items-center justify-center bg-red-600 text-white py-2 px-4 rounded">
-              Submit
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
-  );
-}
+const Login = () => {
+	const [username, setUsername] = useState("");
+	const [password, setPassword] = useState("");
 
+	const { loading, login } = useLogin();
 
+	const handleSubmit = async (e) => {
+		e.preventDefault();
+    // console.log("Username:", username);
+    // console.log("Password:", password);
+		await login(username, password);
+	};
 
-//started code
-// import React from "react";
+	return (
+		<div className='flex flex-col items-center justify-center min-w-96 mx-auto'>
+			<div className='w-full p-6 rounded-lg shadow-md bg-gray-400 bg-clip-padding backdrop-filter backdrop-blur-lg bg-opacity-0'>
+				<h1 className='text-3xl font-semibold text-center text-gray-300'>
+					Login
+					<span className='text-blue-500'> ChatApp</span>
+				</h1>
 
-// export default function Login() {
-//   return (
-//     <div className="flex flex-col items-center justify-center min-w-96 mx-auto">
-//       <div className="w-full p-6 rounded-lg shadow-md bg-red-400 bg-clip-padding backdrop-filter backdrop-blur-lg bg-opacity-0">
-//         <h1 className="text-5xl font-semibold text-center text-black ">
-//           Login
-//           <span className="text-blue-800"> </span>
-//         </h1>
-//         <form>
-//           <div>
-//             <label className="label p-2 mt-2">
-//               <span className=" label-text font-bold text-xl">Username</span>
-//             </label>
-//             <input
-//               type="text"
-//               placeholder="Enter username"
-//               className="input input-bordered w-full max-w-xs"
-//             />
-//             <label className="label p-2 mt-2">
-//               <span className=" label-text font-bold text-xl">Password</span>
-//             </label>
-//             <input
-//               type="text"
-//               placeholder="Enter Password"
-//               className="input input-bordered w-full max-w-xs"
-//             />
-//           </div>
-//           <a href="#" className="test-sm hover:underline hover:text-red-600 mt-3 inline-block"> Don't have an account create now</a>
-//           <div class="flex justify-center items-center ">
-//             <button class="btn btn-neutral mt-2 flex items-center justify-center bg-red-600 text-white py-2 px-4 rounded">
-//               Submit
-//             </button>
-//           </div>
-//         </form>
-//       </div>
-//     </div>
-//   );
-// }
+				<form onSubmit={handleSubmit}>
+					<div>
+						<label className='label p-2'>
+							<span className='text label-text text-black font-semibold text-xl'>Username</span>
+						</label>
+						<input
+							type='text'
+							placeholder='Enter username'
+							className='w-full input input-bordered h-10'
+							value={username}
+							onChange={(e) => setUsername(e.target.value)}
+						/>
+					</div>
+
+					<div>
+						<label className='label'>
+							<span className='label-text text-xl font-semibold text-black'>Password</span>
+						</label>
+						<input
+							type='password'
+							placeholder='Enter Password'
+							className='w-full input input-bordered h-10'
+							value={password}
+							onChange={(e) => setPassword(e.target.value)}
+						/>
+					</div>
+					<Link to='/signup' className='  hover:underline hover:text-blue-600 mt-2 inline-block font-semibold text-black text-xl'>
+						{"Don't"} have an account?
+					</Link>
+
+					<div>
+						<button className='btn btn-block btn-sm mt-2 bg-sky-500 text-black text-xl' disabled={loading}>
+							{loading ? <span className='loading loading-spinner '></span> : "Login"}
+						</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	);
+};
+export default Login;
+
+// STARTER CODE FOR THIS FILE
+// const Login = () => {
+// 	return (
+// 		<div className='flex flex-col items-center justify-center min-w-96 mx-auto'>
+// 			<div className='w-full p-6 rounded-lg shadow-md bg-gray-400 bg-clip-padding backdrop-filter backdrop-blur-lg bg-opacity-0'>
+// 				<h1 className='text-3xl font-semibold text-center text-gray-300'>
+// 					Login
+// 					<span className='text-blue-500'> ChatApp</span>
+// 				</h1>
+
+// 				<form>
+// 					<div>
+// 						<label className='label p-2'>
+// 							<span className='text-base label-text'>Username</span>
+// 						</label>
+// 						<input type='text' placeholder='Enter username' className='w-full input input-bordered h-10' />
+// 					</div>
+
+// 					<div>
+// 						<label className='label'>
+// 							<span className='text-base label-text'>Password</span>
+// 						</label>
+// 						<input
+// 							type='password'
+// 							placeholder='Enter Password'
+// 							className='w-full input input-bordered h-10'
+// 						/>
+// 					</div>
+// 					<a href='#' className='text-sm  hover:underline hover:text-blue-600 mt-2 inline-block'>
+// 						{"Don't"} have an account?
+// 					</a>
+
+// 					<div>
+// 						<button className='btn btn-block btn-sm mt-2'>Login</button>
+// 					</div>
+// 				</form>
+// 			</div>
+// 		</div>
+// 	);
+// };
+// export default Login;

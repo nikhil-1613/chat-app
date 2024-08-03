@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 
 // Load environment variables from .env file
 dotenv.config();
+// console.log("mongo uri:",process.env.CONNECTION_URI);
 
 const connectToMongoDB = async (req, res) => {
     try {

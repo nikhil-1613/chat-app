@@ -44,21 +44,42 @@ export const sendMessage = async (req, res) => {
 	}
 };
 // to get the messages between the logged in user and 
-export const getMessage = async(req,res)=>{
+export const getMessage = async (req, res) => {
     try {
-        const {id:userToChatId}=req.params;
-        const senderID=req.user._id;
+        const { id: userToChatId } = req.params;
+        const senderID = req.user._id;
+
         const conversation = await Conversation.findOne({
-            participants:{$all:[senderID,userToChatId]},
-            //populate message is resoponsible for creating a object of message between the logged in user and reciver user
+            participants: { $all: [senderID, userToChatId] },
         }).populate("messages");
-        if(!conversation) res.status(200).json({});
+
+        if (!conversation) {
+            return res.status(200).json([]); // Send an empty array if no conversation is found
+        }
+
         const messages = conversation.messages;
-        res.status(200).json(messages);
+        return res.status(200).json(messages);
     } catch (error) {
-        console.log("Error in getting message:",error.message)
-        res.status(500).josn({error:"Internal server error"});
+        console.log("Error in getting message:", error.message);
+        return res.status(500).json({ error: "Internal server error" });
     }
-}
+};
+
+// export const getMessage = async(req,res)=>{
+//     try {
+//         const {id:userToChatId}=req.params;
+//         const senderID=req.user._id;
+//         const conversation = await Conversation.findOne({
+//             participants:{$all:[senderID,userToChatId]},
+//             //populate message is resoponsible for creating a object of message between the logged in user and reciver user
+//         }).populate("messages");
+//         if(!conversation) res.status(200).json({});
+//         const messages = conversation.messages;
+//         res.status(200).json(messages);
+//     } catch (error) {
+//         console.log("Error in getting message:",error.message)
+//         res.status(500).json({error:"Internal server error"});
+//     }
+// }
 
  
