@@ -16,7 +16,7 @@ const useGetConversations = () => {
                     throw new Error(`Error: ${res.statusText}`);
                 }
                 const data = await res.json();
-                console.log('Fetched data:', data); // Log fetched data
+                // console.log('Fetched data:', data); // Log fetched data
 
                 if (isMounted) {
                     setConversations(data.filteredUsers); // Adjust based on response structure
