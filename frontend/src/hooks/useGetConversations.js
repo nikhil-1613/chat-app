@@ -11,7 +11,7 @@ const useGetConversations = () => {
         const getConversations = async () => {
             setLoading(true);
             try {
-                const res = await fetch("/api/users");
+                const res = await fetch("http://localhost:3000/api/users");
                 if (!res.ok) {
                     throw new Error(`Error: ${res.statusText}`);
                 }

@@ -13,7 +13,7 @@ const Conversation = ({ conversation, lastIdx, emoji }) => {
   // console.log(`User ${conversation._id} is ${isOnline ? "online" : "offline"}`);
 
   const handleConversationClick = () => {
-    console.log(`Conversation selected: ${conversation._id} - ${conversation.username}`);
+    // console.log(`Conversation selected: ${conversation._id} - ${conversation.username}`);
     setSelectedConversation(conversation);
   };
 

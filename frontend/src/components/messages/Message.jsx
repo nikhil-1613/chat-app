@@ -12,7 +12,7 @@ const Message = ({ message }) => {
     ? authUser.profilePic
     : selectedConversation?.profilePic;
   const bubbleBgColor = fromMe ? "bg-blue-500" : "bg-gray-500";
-
+  //incoming messages
   const shakeClass = message.shouldShake ? "shake" : "";
 
   return (

@@ -23,8 +23,12 @@ app.use('/api/auth',authRoutes)
 app.use('/api/messages',messageRoutes)
 //userRoutes
 app.use('/api',userRoutes);
-
 server.listen(PORT,()=>{
     connectToMongoDB();
     console.log(`server is running on port ${PORT}`)
 })
+
+// app.listen(PORT,()=>{
+//     connectToMongoDB();
+//     console.log(`server is running on port ${PORT}`)
+// })
