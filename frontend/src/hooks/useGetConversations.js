@@ -13,7 +13,12 @@ const useGetConversations = () => {
             try {
                 const token = localStorage.getItem("token"); // Ensure token exists
                 
-                const res = await fetch("http://localhost:5000/api/users", {
+                // Dynamically set the API URL based on environment (local or production)
+                const apiUrl = process.env.NODE_ENV === "production"
+                    ? "https://your-backend-url.com/api/users"  // Replace with the production backend URL
+                    : "http://localhost:5000/api/users"; // Local development URL
+                
+                const res = await fetch(apiUrl, {
                     method: "GET",
                     headers: {
                         "Content-Type": "application/json",
