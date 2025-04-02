@@ -67,6 +67,67 @@ export default useGetConversations;
 //     const [conversations, setConversations] = useState([]);
 
 //     useEffect(() => {
+//         let isMounted = true; // Prevent setting state if unmounted
+
+//         const getConversations = async () => {
+//             setLoading(true);
+//             try {
+//                 const token = localStorage.getItem("token"); // Ensure token exists
+                
+//                 const res = await fetch("http://localhost:5000/api/users", {
+//                     method: "GET",
+//                     headers: {
+//                         "Content-Type": "application/json",
+//                         "Authorization": token ? `Bearer ${token}` : "" // Add JWT token if available
+//                     },
+//                     credentials: "include" // Ensures cookies (if any) are sent
+//                 });
+
+//                 if (!res.ok) {
+//                     const errorMessage = await res.text(); // Get detailed error response
+//                     throw new Error(`Error ${res.status}: ${errorMessage}`);
+//                 }
+
+//                 const data = await res.json();
+//                 console.log('Fetched data:', data);
+
+//                 if (isMounted) {
+//                     if (data.filteredUsers) {
+//                         setConversations(data.filteredUsers);
+//                     } else {
+//                         console.error("filteredUsers not found in response");
+//                     }
+//                 }
+//             } catch (error) {
+//                 console.error('Fetch error:', error);
+//                 toast.error(`Failed to fetch conversations: ${error.message}`);
+//             } finally {
+//                 if (isMounted) {
+//                     setLoading(false);
+//                 }
+//             }
+//         };
+
+//         getConversations();
+
+//         return () => {
+//             isMounted = false; // Cleanup to prevent state update after unmount
+//         };
+//     }, []);
+
+//     return { loading, conversations };
+// };
+
+// export default useGetConversations;
+
+// import { useEffect, useState } from 'react';
+// import toast from 'react-hot-toast';
+
+// const useGetConversations = () => {
+//     const [loading, setLoading] = useState(false);
+//     const [conversations, setConversations] = useState([]);
+
+//     useEffect(() => {
 //         let isMounted = true; // Track if the component is still mounted
 
 //         const getConversations = async () => {
