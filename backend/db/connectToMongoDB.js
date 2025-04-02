@@ -7,7 +7,7 @@ dotenv.config();
 
 const connectToMongoDB = async (req, res) => {
     try {
-        await mongoose.connect(process.env.MONGO_DB_URI || "mongodb+srv://nikhil:admin@cluster0.fmpfn.mongodb.net/chat-app", {
+        await mongoose.connect(process.env.MONGO_DB_URI , {
         });
         console.log('Connected to MongoDB database');
     } catch (error) {
