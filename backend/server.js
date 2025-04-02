@@ -1,34 +1,67 @@
+// import path from "path";
+// import express from "express";
+// import dotenv from "dotenv";
+// import cookieParser from "cookie-parser";
+// import cors from "cors";
+// import authRoutes from "./routes/authRoutes.js";
+// import messageRoutes from "./routes/messageRoutes.js";
+// import userRoutes from "./routes/userRoutes.js";
+
+// import connectToMongoDB from "./db/connectToMongoDB.js";
+// import { app, server } from "./socket/socket.js";
+
+// dotenv.config();
+
+// // const __dirname = path.resolve();
+// // PORT should be assigned after calling dotenv.config() because we need to access the env variables. Didn't realize while recording the video. Sorry for the confusion.
+// const PORT = process.env.PORT || 5000;
+
+// app.use(express.json()); // to parse the incoming requests with JSON payloads (from req.body)
+// app.use(cookieParser());
+// app.use(cors()); // to enable CORS (Cross-Origin Resource Sharing) for all routes and origins
+
+// app.use("/api/auth", authRoutes);
+// app.use("/api/messages", messageRoutes);
+// app.use("/api/users", userRoutes);
+
+// // app.use(express.static(path.join(__dirname, "/frontend/dist")));
+
+// // app.get("*", (req, res) => {
+// // 	res.sendFile(path.join(__dirname, "frontend", "dist", "index.html"));
+// // });
+
+// server.listen(PORT, () => {
+// 	connectToMongoDB();
+// 	console.log(`Server Running on port ${PORT}`);
+// });
+
 import express from "express";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
-//routes importing
-import authRoutes from '../backend/routes/authRoutes.js';
-import messageRoutes from '../backend/routes/messageRoutes.js';
-import userRoutes from '../backend/routes/userRoutes.js';
-//connection importing
+import authRoutes from "../backend/routes/authRoutes.js";
+import messageRoutes from "../backend/routes/messageRoutes.js";
+import userRoutes from "../backend/routes/userRoutes.js";
 import connectToMongoDB from "./db/connectToMongoDB.js";
-//importing socket.io server
-import {app,server} from './socket/socket.js'
+import { app, server } from "./socket/socket.js";
+import cors from "cors";
 
-// const app= express();
 dotenv.config();
-const PORT = process.env.PORT || 3000;
-
+const PORT = process.env.PORT || 5000;
 
 app.use(express.json());
 app.use(cookieParser());
-//authRoutes
-app.use('/api/auth',authRoutes)
-//messagingRoutes
-app.use('/api/messages',messageRoutes)
-//userRoutes
-app.use('/api',userRoutes);
-server.listen(PORT,()=>{
-    connectToMongoDB();
-    console.log(`server is running on port ${PORT}`)
-})
+app.use(cors(
+	{
+		origin: 'http://localhost:3000',  // Allow frontend to make requests
+    credentials: true  // Allow sending cookies and authorization headers
+	}
+)); // Enable CORS for all routes and origins	
 
-// app.listen(PORT,()=>{
-//     connectToMongoDB();
-//     console.log(`server is running on port ${PORT}`)
-// })
+app.use("/api/auth", authRoutes);
+app.use("/api/messages", messageRoutes);
+app.use("/api", userRoutes);
+
+server.listen(PORT, () => {
+  connectToMongoDB();
+  console.log(`🚀 Server running on http://localhost:${PORT}`);
+});

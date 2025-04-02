@@ -1,39 +1,40 @@
 import Conversation from "../models/conversationModel.js";
 import Message from "../models/messageModel.js";
 import { getReceiverSocketId, io } from "../socket/socket.js";
-
 export const sendMessage = async (req, res) => {
 	try {
 		const { message } = req.body;
 		const { id: receiverId } = req.params;
-		const senderID = req.user._id;
+		const senderId = req.user?._id;
+
+		if (!senderId) {
+			return res.status(400).json({ error: "Sender ID is missing. Please authenticate." });
+		}
+
+		console.log("Sender ID:", senderId);
 
 		let conversation = await Conversation.findOne({
-			participants: { $all: [senderID, receiverId] },
+			participants: { $all: [senderId, receiverId] },
 		});
 
 		if (!conversation) {
 			conversation = await Conversation.create({
-				participants: [senderID, receiverId],
+				participants: [senderId, receiverId],
 			});
 		}
 
 		const newMessage = new Message({
-			senderID,
-			receiverId,
+			senderID: senderId,
+			receiverId: receiverId,
 			message,
 		});
 
-		if (newMessage) {
-			conversation.messages.push(newMessage._id);
-		}
-		// this will run in parallel
+		conversation.messages.push(newMessage._id);
+
 		await Promise.all([conversation.save(), newMessage.save()]);
 
-		// SOCKET IO FUNCTIONALITY WILL GO HERE
 		const receiverSocketId = getReceiverSocketId(receiverId);
 		if (receiverSocketId) {
-			// io.to(<socket_id>).emit() used to send events to specific client
 			io.to(receiverSocketId).emit("newMessage", newMessage);
 		}
 
@@ -43,43 +44,90 @@ export const sendMessage = async (req, res) => {
 		res.status(500).json({ error: "Internal server error" });
 	}
 };
-// to get the messages between the logged in user and 
-export const getMessage = async (req, res) => {
-    try {
-        const { id: userToChatId } = req.params;
-        const senderID = req.user._id;
 
-        const conversation = await Conversation.findOne({
-            participants: { $all: [senderID, userToChatId] },
-        }).populate("messages");
+export const getMessages = async (req, res) => {
+	try {
+		const { id: userToChatId } = req.params;
+		const senderId = req.user._id;
 
-        if (!conversation) {
-            return res.status(200).json([]); // Send an empty array if no conversation is found
-        }
+		const conversation = await Conversation.findOne({
+			participants: { $all: [senderId, userToChatId] },
+		}).populate("messages"); // NOT REFERENCE BUT ACTUAL MESSAGES
 
-        const messages = conversation.messages;
-        return res.status(200).json(messages);
-    } catch (error) {
-        console.log("Error in getting message:", error.message);
-        return res.status(500).json({ error: "Internal server error" });
-    }
+		if (!conversation) return res.status(200).json([]);
+
+		const messages = conversation.messages;
+
+		res.status(200).json(messages);
+	} catch (error) {
+		console.log("Error in getMessages controller: ", error.message);
+		res.status(500).json({ error: "Internal server error" });
+	}
 };
 
-// export const getMessage = async(req,res)=>{
-//     try {
-//         const {id:userToChatId}=req.params;
-//         const senderID=req.user._id;
-//         const conversation = await Conversation.findOne({
-//             participants:{$all:[senderID,userToChatId]},
-//             //populate message is resoponsible for creating a object of message between the logged in user and reciver user
-//         }).populate("messages");
-//         if(!conversation) res.status(200).json({});
-//         const messages = conversation.messages;
-//         res.status(200).json(messages);
-//     } catch (error) {
-//         console.log("Error in getting message:",error.message)
-//         res.status(500).json({error:"Internal server error"});
-//     }
-// }
+// import Conversation from "../models/conversationModel.js";
+// import Message from "../models/messageModel.js";
+// import { getReceiverSocketId, io } from "../socket/socket.js";
 
- 
+// export const sendMessage = async (req, res) => {
+// 	try {
+// 		const { message } = req.body;
+// 		const { id: receiverId } = req.params;
+// 		const senderID = req.user._id;
+
+// 		let conversation = await Conversation.findOne({
+// 			participants: { $all: [senderID, receiverId] },
+// 		});
+
+// 		if (!conversation) {
+// 			conversation = await Conversation.create({
+// 				participants: [senderID, receiverId],
+// 			});
+// 		}
+
+// 		const newMessage = new Message({
+// 			senderID,
+// 			receiverId,
+// 			message,
+// 		});
+
+// 		if (newMessage) {
+// 			conversation.messages.push(newMessage._id);
+// 		}
+// 		// this will run in parallel
+// 		await Promise.all([conversation.save(), newMessage.save()]);
+
+// 		// SOCKET IO FUNCTIONALITY WILL GO HERE
+// 		const receiverSocketId = getReceiverSocketId(receiverId);
+// 		if (receiverSocketId) {
+// 			// io.to(<socket_id>).emit() used to send events to specific client
+// 			io.to(receiverSocketId).emit("newMessage", newMessage);
+// 		}
+
+// 		res.status(201).json(newMessage);
+// 	} catch (error) {
+// 		console.log("Error in sendMessage controller: ", error.message);
+// 		res.status(500).json({ error: "Internal server error" });
+// 	}
+// };
+// // to get the messages between the logged in user and 
+// export const getMessage = async (req, res) => {
+//     try {
+//         const { id: userToChatId } = req.params;
+//         const senderID = req.user._id;
+
+//         const conversation = await Conversation.findOne({
+//             participants: { $all: [senderID, userToChatId] },
+//         }).populate("messages");
+
+//         if (!conversation) {
+//             return res.status(200).json([]); // Send an empty array if no conversation is found
+//         }
+
+//         const messages = conversation.messages;
+//         return res.status(200).json(messages);
+//     } catch (error) {
+//         console.log("Error in getting message:", error.message);
+//         return res.status(500).json({ error: "Internal server error" });
+//     }
+// };
