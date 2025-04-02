@@ -36,7 +36,7 @@ app.use("/api/messages", messageRoutes);
 app.use("/api", userRoutes);
 
 // 🔹 Serve Frontend from Same Deployment
-const frontendPath = path.join(__dirname, "./frontend/dist"); 
+const frontendPath = path.join(__dirname, "../frontend/dist"); 
 app.use(express.static(frontendPath));
 
 app.get("*", (req, res) => {
