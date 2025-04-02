@@ -1,68 +1,129 @@
-import { useEffect, useState } from 'react';
-import toast from 'react-hot-toast';
+import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 
 const useGetConversations = () => {
-    const [loading, setLoading] = useState(false);
-    const [conversations, setConversations] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [conversations, setConversations] = useState([]);
 
-    useEffect(() => {
-        let isMounted = true; // Prevent setting state if unmounted
+  useEffect(() => {
+    let isMounted = true; // Prevent setting state if unmounted
 
-        const getConversations = async () => {
-            setLoading(true);
-            try {
-                const token = localStorage.getItem("token"); // Ensure token exists
-                
-                // Dynamically set the API URL based on environment (local or production)
-                const apiUrl = process.env.NODE_ENV === "production"
-                    ? "https://your-backend-url.com/api/users"  // Replace with the production backend URL
-                    : "http://localhost:5000/api/users"; // Local development URL
-                
-                const res = await fetch(apiUrl, {
-                    method: "GET",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "Authorization": token ? `Bearer ${token}` : "" // Add JWT token if available
-                    },
-                    credentials: "include" // Ensures cookies (if any) are sent
-                });
+    const getConversations = async () => {
+      setLoading(true);
+      try {
+        const token = localStorage.getItem("token");
 
-                if (!res.ok) {
-                    const errorMessage = await res.text(); // Get detailed error response
-                    throw new Error(`Error ${res.status}: ${errorMessage}`);
-                }
+        // 🔹 Since frontend & backend are deployed together, just use "/api/users"
+        const apiUrl = "/api/users";
 
-                const data = await res.json();
-                console.log('Fetched data:', data);
+        const res = await fetch(apiUrl, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: token ? `Bearer ${token}` : "",
+          },
+          credentials: "include",
+        });
 
-                if (isMounted) {
-                    if (data.filteredUsers) {
-                        setConversations(data.filteredUsers);
-                    } else {
-                        console.error("filteredUsers not found in response");
-                    }
-                }
-            } catch (error) {
-                console.error('Fetch error:', error);
-                toast.error(`Failed to fetch conversations: ${error.message}`);
-            } finally {
-                if (isMounted) {
-                    setLoading(false);
-                }
-            }
-        };
+        if (!res.ok) {
+          const errorMessage = await res.text();
+          throw new Error(`Error ${res.status}: ${errorMessage}`);
+        }
 
-        getConversations();
+        const data = await res.json();
+        console.log("Fetched data:", data);
 
-        return () => {
-            isMounted = false; // Cleanup to prevent state update after unmount
-        };
-    }, []);
+        if (isMounted) {
+          setConversations(data.filteredUsers || []);
+        }
+      } catch (error) {
+        console.error("Fetch error:", error);
+        toast.error(`Failed to fetch conversations: ${error.message}`);
+      } finally {
+        if (isMounted) {
+          setLoading(false);
+        }
+      }
+    };
 
-    return { loading, conversations };
+    getConversations();
+
+    return () => {
+      isMounted = false; // Cleanup to prevent state update after unmount
+    };
+  }, []);
+
+  return { loading, conversations };
 };
 
 export default useGetConversations;
+
+// import { useEffect, useState } from 'react';
+// import toast from 'react-hot-toast';
+
+// const useGetConversations = () => {
+//     const [loading, setLoading] = useState(false);
+//     const [conversations, setConversations] = useState([]);
+
+//     useEffect(() => {
+//         let isMounted = true; // Prevent setting state if unmounted
+
+//         const getConversations = async () => {
+//             setLoading(true);
+//             try {
+//                 const token = localStorage.getItem("token"); // Ensure token exists
+                
+//                 // Dynamically set the API URL based on environment (local or production)
+//                 const apiUrl = process.env.NODE_ENV === "production" // Check if in development mode
+//                     ? "http://localhost:5000/api/users"  // Replace with the local backend URL  
+//                     : "https://your-backend-url.com/api/users"; // Replace with the production backend URL
+//  // Local development URL
+                
+//                 const res = await fetch(apiUrl, {
+//                     method: "GET",
+//                     headers: {
+//                         "Content-Type": "application/json",
+//                         "Authorization": token ? `Bearer ${token}` : "" // Add JWT token if available
+//                     },
+//                     credentials: "include" // Ensures cookies (if any) are sent
+//                 });
+
+//                 if (!res.ok) {
+//                     const errorMessage = await res.text(); // Get detailed error response
+//                     throw new Error(`Error ${res.status}: ${errorMessage}`);
+//                 }
+
+//                 const data = await res.json();
+//                 console.log('Fetched data:', data);
+
+//                 if (isMounted) {
+//                     if (data.filteredUsers) {
+//                         setConversations(data.filteredUsers);
+//                     } else {
+//                         console.error("filteredUsers not found in response");
+//                     }
+//                 }
+//             } catch (error) {
+//                 console.error('Fetch error:', error);
+//                 toast.error(`Failed to fetch conversations: ${error.message}`);
+//             } finally {
+//                 if (isMounted) {
+//                     setLoading(false);
+//                 }
+//             }
+//         };
+
+//         getConversations();
+
+//         return () => {
+//             isMounted = false; // Cleanup to prevent state update after unmount
+//         };
+//     }, []);
+
+//     return { loading, conversations };
+// };
+
+// export default useGetConversations;
 
 // import { useEffect, useState } from 'react';
 // import toast from 'react-hot-toast';
