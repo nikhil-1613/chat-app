@@ -1,6 +1,4 @@
-Here's your **`README.md`** file with all the details neatly structured. Let me know if you need any modifications! 🚀  
 
----
 
 ### **Chat App - MERN Stack with WebSockets**  
 
